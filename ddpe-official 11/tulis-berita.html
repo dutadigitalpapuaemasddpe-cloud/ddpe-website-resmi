@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ruang Kerja Pengurus · DDPE</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="assets/logo-ddpe.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+  <style>
+    .manage-list { margin-top: 2rem; }
+    .manage-item {
+      display: flex;
+      gap: 0.85rem;
+      align-items: center;
+      padding: 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-white);
+      margin-bottom: 0.65rem;
+    }
+    .manage-item img {
+      width: 72px;
+      height: 54px;
+      object-fit: cover;
+      border-radius: 8px;
+      flex-shrink: 0;
+      background: var(--bg-soft);
+    }
+    .manage-item .meta { flex: 1; min-width: 0; }
+    .manage-item h4 {
+      font-size: 0.92rem;
+      margin: 0 0 0.2rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .manage-item .sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .btn-danger {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 999px;
+      cursor: pointer;
+      font-family: var(--font);
+      flex-shrink: 0;
+    }
+    .btn-danger:hover { background: #fecaca; }
+    .cover-preview {
+      margin: 0.5rem 0 1rem;
+      max-width: 240px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: none;
+    }
+    .cover-preview.show { display: block; }
+    .tabs-editor {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .tabs-editor button {
+      border: 1px solid var(--border);
+      background: var(--bg-white);
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      font-family: var(--font);
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+    .tabs-editor button.active {
+      background: rgba(107, 78, 240, 0.1);
+      color: var(--purple-deep);
+      border-color: rgba(107, 78, 240, 0.25);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-layer"></div>
+  <div class="bg-noise"></div>
+  <nav class="navbar" id="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-brand">
+        <img src="assets/logo-ddpe.jpg" alt="Logo DDPE" />
+        <div>DUTA DIGITAL<span>PAPUA EMAS</span></div>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">Beranda</a>
+        <a href="media.html">Media</a>
+        <a href="berita.html">Berita</a>
+        <a href="gabung.html" class="btn-join">Gabung</a>
+        <a href="kontak.html" class="btn-nav">Kontak</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="editor-wrap">
+    <div id="lockPanel" class="lock-box glass">
+      <div class="section-label" style="justify-content:center;">Khusus pengurus</div>
+      <h2 style="margin-bottom:0.5rem;">Ruang Kerja Pengurus</h2>
+      <p style="color:var(--text-muted);font-size:0.92rem;margin-bottom:1.25rem;">
+        Tulis, unggah foto, publikasikan, dan hapus berita resmi DDPE.
+      </p>
+      <label for="pw" style="text-align:left;">Password</label>
+      <input id="pw" type="password" placeholder="Password pengurus" style="margin-bottom:1rem;" />
+      <div id="lockMsg" class="editor-msg"></div>
+      <button type="button" class="btn btn-primary" id="btnUnlock" style="width:100%;">Masuk</button>
+      <p style="margin-top:1rem;font-size:0.8rem;color:var(--text-muted);">
+        Default: <code>DDPE2026</code> — ganti di <code>js/news-config.js</code>
+      </p>
+    </div>
+
+    <div id="editorPanel" class="editor-box glass" style="display:none;">
+      <div class="section-label">Ruang kerja</div>
+      <h2 style="margin-bottom:1rem;">Kelola berita</h2>
+
+      <div class="tabs-editor">
+        <button type="button" class="active" data-tab="write" id="tabWrite">Tulis baru</button>
+        <button type="button" data-tab="manage" id="tabManage">Kelola / Hapus</button>
+      </div>
+
+      <div id="panelWrite">
+        <div id="editMsg" class="editor-msg"></div>
+
+        <label for="title">Judul</label>
+        <input id="title" type="text" placeholder="Judul berita" maxlength="160" />
+
+        <label for="excerpt">Ringkasan singkat</label>
+        <input id="excerpt" type="text" placeholder="1–2 kalimat untuk daftar berita" maxlength="220" />
+
+        <label for="category">Kategori</label>
+        <select id="category">
+          <option value="berita">Berita</option>
+          <option value="digital-papua">Digital Papua</option>
+          <option value="siaran-pers">Siaran Pers</option>
+          <option value="publikasi">Publikasi</option>
+        </select>
+
+        <label for="author">Penulis</label>
+        <input id="author" type="text" placeholder="Nama / Tim Media DDPE" maxlength="80" />
+
+        <label for="coverFile">Foto sampul</label>
+        <input id="coverFile" type="file" accept="image/jpeg,image/png,image/webp" />
+        <p class="hint">Opsional. JPG/PNG/WebP, disarankan horizontal. Maks ~1,5 MB.</p>
+        <img id="coverPreview" class="cover-preview" alt="Pratinjau foto" />
+
+        <label for="body">Isi berita</label>
+        <textarea id="body" placeholder="Tulis isi berita. Pisahkan paragraf dengan baris kosong."></textarea>
+        <p class="hint">HTML sederhana diizinkan: &lt;strong&gt;, &lt;em&gt;, &lt;p&gt;.</p>
+
+        <button type="button" class="btn btn-primary" id="btnPublish">Publikasikan</button>
+        <a href="berita.html" class="btn btn-ghost" style="margin-left:0.5rem;">Lihat berita publik</a>
+      </div>
+
+      <div id="panelManage" style="display:none;">
+        <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:1rem;">
+          Daftar berita yang tampil di website. Hapus jika salah publikasi.
+        </p>
+        <div id="manageList" class="manage-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none;padding-top:0;">
+        <span>© 2026 Duta Digital Papua Emas</span>
+        <span>Ruang kerja internal</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/news-config.js"></script>
+  <script src="js/news-store.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    (function () {
+      var lock = document.getElementById("lockPanel");
+      var editor = document.getElementById("editorPanel");
+      var lockMsg = document.getElementById("lockMsg");
+      var editMsg = document.getElementById("editMsg");
+      var coverData = "";
+
+      function showEditor() {
+        sessionStorage.setItem("ddpe_editor_ok", "1");
+        lock.style.display = "none";
+        editor.style.display = "block";
+        renderManage();
+      }
+
+      if (sessionStorage.getItem("ddpe_editor_ok") === "1") showEditor();
+
+      document.getElementById("btnUnlock").addEventListener("click", function () {
+        if (DDPENews.checkPassword(document.getElementById("pw").value)) {
+          lockMsg.className = "editor-msg";
+          showEditor();
+        } else {
+          lockMsg.className = "editor-msg err";
+          lockMsg.textContent = "Password salah.";
+        }
+      });
+
+      // Tabs
+      document.getElementById("tabWrite").addEventListener("click", function () {
+        document.getElementById("tabWrite").classList.add("active");
+        document.getElementById("tabManage").classList.remove("active");
+        document.getElementById("panelWrite").style.display = "block";
+        document.getElementById("panelManage").style.display = "none";
+      });
+      document.getElementById("tabManage").addEventListener("click", function () {
+        document.getElementById("tabManage").classList.add("active");
+        document.getElementById("tabWrite").classList.remove("active");
+        document.getElementById("panelWrite").style.display = "none";
+        document.getElementById("panelManage").style.display = "block";
+        renderManage();
+      });
+
+      // Cover upload → compress to data URL
+      document.getElementById("coverFile").addEventListener("change", function (e) {
+        var file = e.target.files && e.target.files[0];
+        coverData = "";
+        var preview = document.getElementById("coverPreview");
+        preview.classList.remove("show");
+        preview.removeAttribute("src");
+        if (!file) return;
+        if (file.size > 2.5 * 1024 * 1024) {
+          editMsg.className = "editor-msg err";
+          editMsg.textContent = "Foto terlalu besar. Maksimal sekitar 2,5 MB.";
+          e.target.value = "";
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function () {
+          var img = new Image();
+          img.onload = function () {
+            var maxW = 1200;
+            var w = img.width;
+            var h = img.height;
+            if (w > maxW) {
+              h = Math.round(h * maxW / w);
+              w = maxW;
+            }
+            var canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+            coverData = canvas.toDataURL("image/jpeg", 0.82);
+            preview.src = coverData;
+            preview.classList.add("show");
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      document.getElementById("btnPublish").addEventListener("click", async function () {
+        editMsg.className = "editor-msg";
+        var title = document.getElementById("title").value;
+        var excerpt = document.getElementById("excerpt").value;
+        var category = document.getElementById("category").value;
+        var author = document.getElementById("author").value;
+        var bodyRaw = document.getElementById("body").value.trim();
+        var body = bodyRaw;
+        if (body && body.indexOf("<p>") === -1) {
+          body = body.split(/\n\s*\n/).map(function (p) {
+            return "<p>" + p.replace(/\n/g, "<br>") + "</p>";
+          }).join("");
+        }
+        try {
+          var article = await DDPENews.publish({
+            title: title,
+            excerpt: excerpt,
+            category: category,
+            categoryLabel: DDPENews.labelFor(category),
+            author: author || "Pengurus DDPE",
+            body: body,
+            coverImage: coverData || ""
+          });
+          editMsg.className = "editor-msg ok";
+          editMsg.innerHTML =
+            'Berhasil dipublikasikan. <a href="artikel.html?id=' +
+            encodeURIComponent(article.id) +
+            '" style="color:inherit;font-weight:700;">Baca artikel →</a>';
+          document.getElementById("title").value = "";
+          document.getElementById("excerpt").value = "";
+          document.getElementById("body").value = "";
+          document.getElementById("coverFile").value = "";
+          coverData = "";
+          document.getElementById("coverPreview").classList.remove("show");
+          renderManage();
+        } catch (err) {
+          editMsg.className = "editor-msg err";
+          editMsg.textContent = err.message || "Gagal mempublikasikan.";
+        }
+      });
+
+      function renderManage() {
+        var list = DDPENews.listManaged();
+        var box = document.getElementById("manageList");
+        if (!list.length) {
+          box.innerHTML = '<p style="color:var(--text-muted);font-size:0.9rem;">Belum ada berita.</p>';
+          return;
+        }
+        box.innerHTML = "";
+        list.forEach(function (a, i) {
+          var row = document.createElement("div");
+          row.className = "manage-item";
+          var cover = DDPENews.coverOf(a, i);
+          row.innerHTML =
+            '<img src="' + cover + '" alt="" />' +
+            '<div class="meta">' +
+              "<h4>" + a.title + "</h4>" +
+              '<div class="sub">' + (a.categoryLabel || "") + " · " +
+                DDPENews.formatDate(a.publishedAt) + " · " + (a.author || "") +
+              "</div>" +
+            "</div>" +
+            '<button type="button" class="btn-danger" data-id="' + a.id + '">Hapus</button>';
+          box.appendChild(row);
+        });
+        box.querySelectorAll(".btn-danger").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var id = btn.getAttribute("data-id");
+            if (!confirm("Hapus berita ini dari website?")) return;
+            DDPENews.deleteArticle(id);
+            renderManage();
+          });
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

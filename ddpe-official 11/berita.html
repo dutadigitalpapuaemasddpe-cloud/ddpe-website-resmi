@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Berita · Duta Digital Papua Emas</title>
+  <meta name="description" content="Berita resmi, siaran pers, dan laporan seputar DDPE serta literasi-inovasi digital di Papua." />
+  <link rel="icon" href="assets/logo-ddpe.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+  <div class="bg-layer"></div>
+  <div class="bg-noise"></div>
+  <nav class="navbar" id="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-brand">
+        <img src="assets/logo-ddpe.jpg" alt="Logo DDPE" />
+        <div>DUTA DIGITAL<span>PAPUA EMAS</span></div>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">Beranda</a>
+        <a href="tentang.html">Tentang</a>
+        <a href="struktur.html">Struktur</a>
+        <a href="program.html">Program</a>
+        <a href="kegiatan.html">Kegiatan</a>
+        <a href="media.html">Media</a>
+        <a href="berita.html" class="active">Berita</a>
+        <a href="gabung.html" class="btn-join">Gabung</a>
+        <a href="kontak.html" class="btn-nav">Kontak</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="news-list-page">
+    <div class="container">
+      <header class="news-masthead">
+        <h1>Berita &amp; Rilis Resmi</h1>
+        <p class="deck">Pusat informasi Duta Digital Papua Emas — berita organisasi, siaran pers, publikasi, dan isu digital di Papua.</p>
+      </header>
+
+      <div class="news-filters" id="filters">
+        <button type="button" data-cat="semua" class="active">Semua</button>
+        <button type="button" data-cat="berita">Berita</button>
+        <button type="button" data-cat="digital-papua">Digital Papua</button>
+        <button type="button" data-cat="siaran-pers">Siaran Pers</button>
+        <button type="button" data-cat="publikasi">Publikasi</button>
+      </div>
+
+      <div id="featuredRoot"></div>
+      <div id="newsRoot" class="news-formal-list" style="display:none;"></div>
+      <p id="newsEmpty" class="media-empty" style="display:none;">Belum ada berita pada kategori ini.</p>
+
+      <div class="pengurus-bar">
+        <a href="tulis-berita.html" class="btn btn-ghost">Ruang kerja pengurus · Tulis berita</a>
+        <a href="media.html" class="btn btn-ghost">Media Center</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">
+            <img src="assets/logo-ddpe.jpg" alt="DDPE" />
+            <div>
+              <strong>Duta Digital Papua Emas</strong>
+              <span>Membangun Generasi Cerdas di Era Digital</span>
+            </div>
+          </div>
+          <p>Organisasi induk pemberdayaan pemuda &amp; edukasi digital di Mimika, Papua Tengah.</p>
+        </div>
+        <div>
+          <h4>Navigasi</h4>
+          <ul>
+            <li><a href="tentang.html">Tentang Kami</a></li>
+            <li><a href="media.html">Media</a></li>
+            <li><a href="berita.html">Berita</a></li>
+            <li><a href="gabung.html">Gabung</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Kontak</h4>
+          <ul>
+            <li><a href="mailto:dutadigitalpapuaemasddpe@gmail.com">dutadigitalpapuaemasddpe@gmail.com</a></li>
+            <li><a href="https://www.ddpe.my.id">www.ddpe.my.id</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Duta Digital Papua Emas · Founder: Rohilman Putra Jagong</span>
+        <span>Mimika, Papua Tengah</span>
+      </div>
+    </div>
+  </footer>
+  <script src="js/news-config.js"></script>
+  <script src="js/news-store.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    (function () {
+      var featuredRoot = document.getElementById("featuredRoot");
+      var root = document.getElementById("newsRoot");
+      var empty = document.getElementById("newsEmpty");
+
+      function escapeHtml(s) {
+        return String(s || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function render(cat) {
+        var list = DDPENews.byCategory(cat);
+        featuredRoot.innerHTML = "";
+        root.innerHTML = "";
+
+        if (!list.length) {
+          empty.style.display = "block";
+          root.style.display = "none";
+          featuredRoot.style.display = "none";
+          return;
+        }
+
+        empty.style.display = "none";
+        featuredRoot.style.display = "block";
+
+        var top = list[0];
+        var rest = list.slice(1);
+        var topCover = DDPENews.coverOf(top, 0);
+
+        var feat = document.createElement("a");
+        feat.href = "artikel.html?id=" + encodeURIComponent(top.id);
+        feat.className = "news-featured-formal";
+        feat.innerHTML =
+          '<div class="img-wrap" style="background-image:url(\'' + topCover + '\')"></div>' +
+          '<div class="body">' +
+            '<div class="cat">' + escapeHtml(top.categoryLabel || "Berita") + '</div>' +
+            '<h2>' + escapeHtml(top.title) + '</h2>' +
+            '<p>' + escapeHtml(top.excerpt || "") + '</p>' +
+            '<div class="byline">' + escapeHtml(DDPENews.formatDate(top.publishedAt)) +
+              ' · ' + escapeHtml(top.author || "") + ' · Mimika, Papua Tengah</div>' +
+          '</div>';
+        featuredRoot.appendChild(feat);
+
+        if (!rest.length) {
+          root.style.display = "none";
+          return;
+        }
+
+        root.style.display = "flex";
+        rest.forEach(function (a, i) {
+          var cover = DDPENews.coverOf(a, i + 1);
+          var el = document.createElement("a");
+          el.href = "artikel.html?id=" + encodeURIComponent(a.id);
+          el.className = "news-formal-item";
+          el.innerHTML =
+            '<img class="news-formal-thumb" src="' + cover + '" alt="" loading="lazy" />' +
+            '<div>' +
+              '<div class="cat">' + escapeHtml(a.categoryLabel || "Berita") + '</div>' +
+              '<h3>' + escapeHtml(a.title) + '</h3>' +
+              '<div class="excerpt">' + escapeHtml(a.excerpt || "") + '</div>' +
+              '<div class="byline">' + escapeHtml(DDPENews.formatDate(a.publishedAt)) +
+                ' · ' + escapeHtml(a.author || "") + '</div>' +
+            '</div>';
+          root.appendChild(el);
+        });
+      }
+
+      document.getElementById("filters").addEventListener("click", function (e) {
+        var btn = e.target.closest("button[data-cat]");
+        if (!btn) return;
+        document.querySelectorAll("#filters button").forEach(function (b) {
+          b.classList.remove("active");
+        });
+        btn.classList.add("active");
+        render(btn.getAttribute("data-cat"));
+      });
+
+      render("semua");
+    })();
+  </script>
+</body>
+</html>
